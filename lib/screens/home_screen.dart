@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:exemplo_geoalocator/widgets/weather_card.dart'; // Importe corrigido
+import 'package:exemplo_geoalocator/services/weather_api.dart';
 
 import '../models/weather.dart';
-import '../services/weather_api.dart'; // Verifique o caminho correto
 
 class TelaInicial extends StatefulWidget {
   @override
@@ -28,12 +27,38 @@ class _TelaInicialState extends State<TelaInicial> {
         child: FutureBuilder<Clima>(
           future: _dadosClima,
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return WeatherCard(clima: snapshot.data!);
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
             } else if (snapshot.hasError) {
               return Text('Erro ao carregar dados');
+            } else {
+              final clima = snapshot.data!;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Localização: ${clima.localizacao}',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Temperatura: ${clima.temperatura}°C',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Condição Climática: ${clima.condicaoClimatica}',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Umidade: ${clima.umidade}%',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Velocidade do Vento: ${clima.velocidadeVento} m/s',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ],
+              );
             }
-            return CircularProgressIndicator();
           },
         ),
       ),
